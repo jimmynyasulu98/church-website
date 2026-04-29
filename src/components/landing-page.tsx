@@ -141,7 +141,7 @@ export function LandingPage() {
     <div className="bg-white text-primary">
       <section
         id="home"
-        className="relative min-h-[690px] overflow-hidden bg-cover bg-center text-white"
+        className="relative overflow-hidden bg-cover bg-center text-white lg:min-h-[690px]"
         style={{
           backgroundImage:
             "url(https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=2200&q=85)",
@@ -149,7 +149,7 @@ export function LandingPage() {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/92 via-slate-950/58 to-slate-950/20" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
-        <div className="relative mx-auto max-w-7xl px-4 pb-40 pt-28 sm:px-6 lg:px-8 lg:pt-32">
+        <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-12 sm:px-6 sm:pb-40 lg:px-8 lg:pt-32">
           <motion.div
             initial="hidden"
             animate="show"
@@ -162,7 +162,7 @@ export function LandingPage() {
             >
               Welcome to
               <br />
-              CCAP Zomba
+              Zomba CCAP 
             </motion.h1>
             <motion.p
               variants={fadeUp}
@@ -182,7 +182,7 @@ export function LandingPage() {
                     <div
                       key={`${service.title}-${service.time}`}
                       className={cn(
-                        "flex items-center gap-4 px-6 py-4",
+                        "flex items-center gap-4 px-4 py-3 sm:px-6 sm:py-4",
                         index > 0 && "border-t border-slate-200 sm:border-l sm:border-t-0",
                       )}
                     >
@@ -202,14 +202,17 @@ export function LandingPage() {
                 })}
               </div>
             </motion.div>
-            <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-4">
-              <Button asChild className="h-14 min-w-48 rounded-sm bg-accent">
+            <motion.div
+              variants={fadeUp}
+              className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:gap-4"
+            >
+              <Button asChild className="h-14 w-full rounded-sm bg-accent sm:w-auto sm:min-w-48">
                 <Link href="#new-here">Plan a Visit</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
-                className="h-14 min-w-48 rounded-sm border-white bg-transparent text-white hover:bg-white hover:text-primary"
+                className="h-14 w-full rounded-sm border-white bg-transparent text-white hover:bg-white hover:text-primary sm:w-auto sm:min-w-48"
               >
                 <Link href="#sermons">Watch Sermons</Link>
               </Button>
@@ -223,7 +226,7 @@ export function LandingPage() {
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
         transition={{ staggerChildren: 0.12 }}
-        className="relative z-10 mx-auto -mt-24 max-w-6xl px-4 sm:px-6 lg:px-8"
+        className="relative z-10 mx-auto mt-8 max-w-6xl px-4 sm:-mt-24 sm:px-6 lg:px-8"
       >
         <div className="grid gap-5 rounded-xl bg-white p-4 shadow-2xl shadow-slate-200 md:grid-cols-2 lg:grid-cols-4">
           {pillars.map((pillar) => {
@@ -296,6 +299,52 @@ export function LandingPage() {
                 "url(https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1300&q=80)",
             }}
           />
+        </motion.div>
+      </motion.section>
+
+      <motion.section
+        id="minister-message"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.25 }}
+        className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8"
+      >
+        <motion.div
+          variants={fadeUp}
+          className="grid overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-100 lg:grid-cols-[0.42fr_0.58fr]"
+        >
+          <div
+            className="min-h-[360px] bg-cover bg-center"
+            style={{
+              backgroundImage:
+                "url(https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=1000&q=80)",
+            }}
+            aria-label="Main reverend portrait placeholder"
+          />
+          <div className="p-8 sm:p-10 lg:p-14">
+            <div className="mb-5 h-1 w-14 rounded-full bg-accent" />
+            <p className="text-sm font-extrabold uppercase tracking-wide text-accent">
+              Message from the Main Reverend
+            </p>
+            <h2 className="mt-4 text-3xl font-black leading-tight text-primary sm:text-4xl">
+              A warm welcome to CCAP Zomba.
+            </h2>
+            <p className="mt-5 text-lg leading-8 text-slate-700">
+              We are grateful that you are here. Our prayer is that every person
+              who comes to CCAP Zomba will encounter Christ, find a caring
+              family, and grow in faith through worship, fellowship,
+              discipleship, and service.
+            </p>
+            <div className="mt-8 border-l-4 border-accent pl-5">
+              <p className="text-xl font-black text-primary">Rev. John Phiri</p>
+              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-slate-500">
+                Main Reverend, CCAP Zomba
+              </p>
+            </div>
+            <Button asChild className="mt-8 rounded-sm bg-accent">
+              <Link href="#contact">Read Full Message</Link>
+            </Button>
+          </div>
         </motion.div>
       </motion.section>
 
