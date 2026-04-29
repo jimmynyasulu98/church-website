@@ -17,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Mlaga Church",
-  description: "A welcoming church community serving Mlaga and beyond.",
+  title: "CCAP Zomba",
+  description: "A Christ-centered church community in Zomba.",
 };
 
 export default function RootLayout({
