@@ -17,8 +17,16 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ccapzomba.org"),
   title: "CCAP Zomba",
   description: "A Christ-centered church community in Zomba.",
+  openGraph: {
+    title: "CCAP Zomba",
+    description: "A Christ-centered church community in Zomba.",
+    url: "https://ccapzomba.org",
+    siteName: "CCAP Zomba",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

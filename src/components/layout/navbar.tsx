@@ -13,6 +13,7 @@ import {
 
 import logo from "@/public/ccap_logo.png";
 import { Button } from "@/components/ui/button";
+import { primaryNavLinks } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import {
   Sheet,
@@ -22,19 +23,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
-const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Ministries", href: "/#new-here" },
-  { label: "Districts", href: "/#mlaga" },
-  { label: "Mlaga", href: "/#mlaga" },
-  { label: "Sermons", href: "/#sermons" },
-  { label: "Events", href: "/#events" },
-  { label: "News", href: "/#sermons" },
-  { label: "Giving", href: "/#giving" },
-  { label: "Contact", href: "/#contact" },
-];
 
 export function Navbar() {
   const pathname = usePathname();
@@ -106,7 +94,7 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-          {navLinks.map((link) => {
+          {primaryNavLinks.map((link) => {
             const isActive = isCurrentPage(link.href);
 
             return (
@@ -146,7 +134,7 @@ export function Navbar() {
               <SheetTitle>CCAP Zomba</SheetTitle>
             </SheetHeader>
             <nav className="mt-8 grid gap-2" aria-label="Mobile primary">
-              {navLinks.map((link) => (
+              {primaryNavLinks.map((link) => (
                 <SheetClose asChild key={link.label}>
                   <Link
                     href={link.href}

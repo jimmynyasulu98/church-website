@@ -3,19 +3,7 @@ import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 
 import logo from "@/public/ccap_logo.png";
-
-const quickLinks = [
-  { label: "About Us", href: "/about" },
-  { label: "Ministries", href: "/#new-here" },
-  { label: "Districts", href: "/#mlaga" },
-  { label: "Mlaga", href: "/#mlaga" },
-  { label: "Sermons", href: "/#sermons" },
-  { label: "Events", href: "/#events" },
-  { label: "News", href: "/#sermons" },
-  { label: "Giving", href: "/#giving" },
-  { label: "Vacancies", href: "/" },
-  { label: "Contact Us", href: "/#contact" },
-];
+import { footerQuickLinks } from "@/lib/navigation";
 
 const serviceTimes = [
   ["Chichewa Service", "6:00 AM - 8:00 AM"],
@@ -63,7 +51,7 @@ export function Footer() {
             Quick Links
           </h2>
           <div className="mt-6 grid grid-cols-2 gap-x-10 gap-y-3">
-            {quickLinks.map((link) => (
+            {footerQuickLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
