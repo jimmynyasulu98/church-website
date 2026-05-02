@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Globe2,
   Mail,
@@ -12,6 +13,7 @@ import {
 
 import logo from "@/public/ccap_logo.png";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Sheet,
   SheetClose,
@@ -22,19 +24,32 @@ import {
 } from "@/components/ui/sheet";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#new-here" },
-  { label: "Ministries", href: "#new-here" },
-  { label: "Districts", href: "#mlaga" },
-  { label: "Mlaga", href: "#mlaga" },
-  { label: "Sermons", href: "#sermons" },
-  { label: "Events", href: "#events" },
-  { label: "News", href: "#sermons" },
-  { label: "Giving", href: "#giving" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Ministries", href: "/#new-here" },
+  { label: "Districts", href: "/#mlaga" },
+  { label: "Mlaga", href: "/#mlaga" },
+  { label: "Sermons", href: "/#sermons" },
+  { label: "Events", href: "/#events" },
+  { label: "News", href: "/#sermons" },
+  { label: "Giving", href: "/#giving" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export function Navbar() {
+  const pathname = usePathname();
+  const isCurrentPage = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+
+    if (href.includes("#")) {
+      return false;
+    }
+
+    return pathname === href;
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="bg-primary text-white">
@@ -73,7 +88,7 @@ export function Navbar() {
       </div>
 
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="#home" className="flex items-center gap-3 text-primary">
+        <Link href="/" className="flex items-center gap-3 text-primary">
           <Image
             src={logo}
             alt="CCAP Zomba logo"
@@ -91,20 +106,27 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="border-b-2 border-transparent px-3 py-7 text-sm font-extrabold text-primary transition hover:border-accent hover:text-accent"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = isCurrentPage(link.href);
+
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                className={cn(
+                  "border-b-2 border-transparent px-3 py-7 text-sm font-extrabold text-primary transition hover:border-accent hover:text-accent",
+                  isActive && "border-accent text-accent",
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="hidden lg:block">
           <Button asChild className="h-11 rounded-sm px-5 text-xs font-black">
-            <Link href="#new-here">I&apos;m New Here</Link>
+            <Link href="/#new-here">I&apos;m New Here</Link>
           </Button>
         </div>
 
@@ -128,7 +150,10 @@ export function Navbar() {
                 <SheetClose asChild key={link.label}>
                   <Link
                     href={link.href}
-                    className="rounded-md px-3 py-3 text-base font-bold text-slate-700 transition hover:bg-slate-100 hover:text-primary"
+                    className={cn(
+                      "rounded-md px-3 py-3 text-base font-bold text-slate-700 transition hover:bg-slate-100 hover:text-primary",
+                      isCurrentPage(link.href) && "bg-blue-50 text-accent",
+                    )}
                   >
                     {link.label}
                   </Link>
@@ -137,7 +162,7 @@ export function Navbar() {
             </nav>
             <SheetClose asChild>
               <Button asChild className="mt-8 w-full">
-                <Link href="#new-here">I&apos;m New Here</Link>
+                <Link href="/#new-here">I&apos;m New Here</Link>
               </Button>
             </SheetClose>
           </SheetContent>

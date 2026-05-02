@@ -5,16 +5,16 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import logo from "@/public/ccap_logo.png";
 
 const quickLinks = [
-  "About Us",
-  "Ministries",
-  "Districts",
-  "Mlaga",
-  "Sermons",
-  "Events",
-  "News",
-  "Giving",
-  "Vacancies",
-  "Contact Us",
+  { label: "About Us", href: "/about" },
+  { label: "Ministries", href: "/#new-here" },
+  { label: "Districts", href: "/#mlaga" },
+  { label: "Mlaga", href: "/#mlaga" },
+  { label: "Sermons", href: "/#sermons" },
+  { label: "Events", href: "/#events" },
+  { label: "News", href: "/#sermons" },
+  { label: "Giving", href: "/#giving" },
+  { label: "Vacancies", href: "/" },
+  { label: "Contact Us", href: "/#contact" },
 ];
 
 const serviceTimes = [
@@ -65,11 +65,11 @@ export function Footer() {
           <div className="mt-6 grid grid-cols-2 gap-x-10 gap-y-3">
             {quickLinks.map((link) => (
               <Link
-                key={link}
-                href="#home"
+                key={link.label}
+                href={link.href}
                 className="text-sm text-blue-50 transition hover:text-white"
               >
-                {link}
+                {link.label}
               </Link>
             ))}
           </div>
