@@ -100,9 +100,9 @@ export function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 border-t border-white/15 px-4 py-6 text-sm text-blue-50 sm:px-6 md:flex-row lg:px-8">
         <p>© 2024 CCAP Zomba. All Rights Reserved.</p>
         <p className="flex gap-5">
-          <Link href="#home">Privacy Policy</Link>
+          <Link href="/#home">Privacy Policy</Link>
           <span>|</span>
-          <Link href="#home">Terms of Use</Link>
+          <Link href="/#home">Terms of Use</Link>
         </p>
       </div>
     </footer>
