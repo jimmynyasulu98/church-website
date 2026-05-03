@@ -9,7 +9,7 @@ export const primaryNavLinks: NavLink[] = [
   { label: "About", href: "/about" },
   { label: "Ministries", href: "/ministries" },
   { label: "Districts", href: "/districts" },
-  { label: "Mlaga", href: "/#mlaga" },
+  { label: "Mlaga", href: "/mlaga" },
   {
     label: "Media",
     href: "/#sermons",
@@ -27,7 +27,7 @@ export const footerQuickLinks: NavLink[] = [
   { label: "About Us", href: "/about" },
   { label: "Ministries", href: "/ministries" },
   { label: "Districts", href: "/districts" },
-  { label: "Mlaga", href: "/#mlaga" },
+  { label: "Mlaga", href: "/mlaga" },
   { label: "Sermons", href: "/#sermons" },
   { label: "Events", href: "/#events" },
   { label: "News", href: "/#news" },
