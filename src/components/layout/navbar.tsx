@@ -15,6 +15,7 @@ import {
 import logo from "@/public/ccap_logo.png";
 import { Button } from "@/components/ui/button";
 import { primaryNavLinks } from "@/lib/navigation";
+import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import {
   Sheet,
@@ -52,7 +53,7 @@ export function Navbar() {
             </span>
             <span className="flex items-center gap-2">
               <Mail className="h-3.5 w-3.5" aria-hidden="true" />
-              info@ccapzomba.org
+              {siteConfig.email}
             </span>
             <span className="hidden items-center gap-2 md:flex">
               <Phone className="h-3.5 w-3.5" aria-hidden="true" />

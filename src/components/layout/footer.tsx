@@ -4,6 +4,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 
 import logo from "@/public/ccap_logo.png";
 import { footerQuickLinks } from "@/lib/navigation";
+import { siteConfig } from "@/lib/site";
 
 const serviceTimes = [
   ["Chichewa Service", "6:00 AM - 8:00 AM"],
@@ -78,7 +79,7 @@ export function Footer() {
             </p>
             <p className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-white" />
-              info@ccapzomba.org
+              {siteConfig.email}
             </p>
           </div>
         </div>

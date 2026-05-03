@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CalendarDays, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { EventsBrowser } from "@/components/media/events-browser";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
-const pageUrl = "https://ccapzomba.org/events";
+const pageUrl = absoluteUrl("/events");
 
 export const metadata: Metadata = {
   title: "Events | CCAP Zomba",
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
   },
 };
 
-const events = [
+const upcomingEvents = [
   {
     month: "MAY",
     day: "18",
@@ -40,6 +41,8 @@ const events = [
     venue: "CCAP Zomba Main Hall",
     description:
       "A youth gathering for worship, teaching, prayer and fellowship.",
+    audience: "Youth, young adults and ministry leaders",
+    contact: "Youth Ministry",
   },
   {
     month: "MAY",
@@ -50,6 +53,8 @@ const events = [
     venue: "District 2",
     description:
       "A fellowship meeting for women to grow in faith and service.",
+    audience: "Women and invited guests",
+    contact: "Women's Fellowship",
   },
   {
     month: "JUN",
@@ -60,6 +65,8 @@ const events = [
     venue: "CCAP Zomba",
     description:
       "A communion service across the Sunday worship gatherings.",
+    audience: "All members and visitors",
+    contact: "Church Office",
   },
   {
     month: "JUN",
@@ -69,6 +76,8 @@ const events = [
     displayDate: "16 June 2026 - 2:00 PM",
     venue: "District 3",
     description: "A meeting for men focused on discipleship and purpose.",
+    audience: "Men's Fellowship members and guests",
+    contact: "Men's Fellowship",
   },
   {
     month: "JUN",
@@ -79,8 +88,51 @@ const events = [
     venue: "CCAP Zomba",
     description:
       "A church-wide celebration of God's faithfulness to CCAP Zomba.",
+    audience: "All congregants, families and invited guests",
+    contact: "Church Office",
   },
 ];
+
+const pastEvents = [
+  {
+    month: "APR",
+    day: "21",
+    title: "Easter Celebration Service",
+    date: "2026-04-21",
+    displayDate: "21 April 2026 - All Services",
+    venue: "CCAP Zomba",
+    description:
+      "A worship celebration remembering the resurrection of Jesus Christ.",
+    audience: "All members and visitors",
+    contact: "Church Office",
+  },
+  {
+    month: "APR",
+    day: "14",
+    title: "Sunday School Teachers Workshop",
+    date: "2026-04-14",
+    displayDate: "14 April 2026 - 9:00 AM",
+    venue: "CCAP Zomba Classrooms",
+    description:
+      "A training workshop for Sunday School teachers and helpers.",
+    audience: "Sunday School teachers and volunteers",
+    contact: "Sunday School Ministry",
+  },
+  {
+    month: "MAR",
+    day: "30",
+    title: "District Fellowship Sunday",
+    date: "2026-03-30",
+    displayDate: "30 March 2026 - 2:00 PM",
+    venue: "District Host Homes",
+    description:
+      "A district-level fellowship gathering for prayer and encouragement.",
+    audience: "District members and families",
+    contact: "District Leadership",
+  },
+];
+
+const events = [...upcomingEvents, ...pastEvents];
 
 const faqs = [
   {
@@ -106,8 +158,8 @@ const structuredData = {
       description: metadata.description,
       isPartOf: {
         "@type": "WebSite",
-        name: "CCAP Zomba",
-        url: "https://ccapzomba.org",
+        name: siteConfig.name,
+        url: siteConfig.url,
       },
     },
     {
@@ -117,7 +169,7 @@ const structuredData = {
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: "https://ccapzomba.org",
+          item: siteConfig.url,
         },
         {
           "@type": "ListItem",
@@ -139,7 +191,10 @@ const structuredData = {
           startDate: event.date,
           description: event.description,
           eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-          eventStatus: "https://schema.org/EventScheduled",
+          eventStatus:
+            event.date < "2026-05-03"
+              ? "https://schema.org/EventCompleted"
+              : "https://schema.org/EventScheduled",
           location: {
             "@type": "Place",
             name: event.venue,
@@ -151,8 +206,8 @@ const structuredData = {
           },
           organizer: {
             "@type": "Church",
-            name: "CCAP Zomba",
-            url: "https://ccapzomba.org",
+            name: siteConfig.name,
+            url: siteConfig.url,
           },
         },
       })),
@@ -205,60 +260,10 @@ export default function EventsPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex gap-4 text-sm font-black">
-            <span className="border-b-2 border-accent pb-2 text-accent">
-              Upcoming Events
-            </span>
-            <span className="pb-2 text-slate-500">Past Events</span>
-          </div>
-          <Link
-            href="/#contact"
-            className="text-sm font-black text-accent transition hover:text-primary"
-          >
-            View Calendar
-          </Link>
-        </div>
-
-        <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-          {events.map((event) => (
-            <article
-              key={event.title}
-              className="grid gap-5 border-b border-slate-200 px-5 py-5 last:border-b-0 sm:grid-cols-[80px_1fr_auto] sm:items-center"
-            >
-              <div className="w-20 rounded-md border border-slate-200 bg-white py-3 text-center">
-                <p className="text-xs font-black text-accent">{event.month}</p>
-                <p className="text-3xl font-black">{event.day}</p>
-              </div>
-              <div>
-                <h2 className="text-base font-black text-accent">
-                  {event.title}
-                </h2>
-                <p className="mt-1 text-sm font-semibold text-slate-700">
-                  <time dateTime={event.date}>{event.displayDate}</time>
-                </p>
-                <p className="mt-1 text-sm text-slate-600">{event.venue}</p>
-              </div>
-              <Link
-                href="/#contact"
-                className="text-sm font-black text-accent transition hover:text-primary"
-              >
-                View Details +
-              </Link>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-8 flex justify-center">
-          <Button asChild className="h-12 rounded-sm bg-accent px-8 font-black">
-            <Link href="/#contact">
-              <CalendarDays className="mr-2 h-4 w-4" aria-hidden="true" />
-              View All Events
-            </Link>
-          </Button>
-        </div>
-      </section>
+      <EventsBrowser
+        upcomingEvents={upcomingEvents}
+        pastEvents={pastEvents}
+      />
 
       <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="grid gap-5 border-t border-slate-200 pt-8 md:grid-cols-2">

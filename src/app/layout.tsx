@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { PageTransition } from "@/components/providers/page-transition";
+import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -17,14 +18,14 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ccapzomba.org"),
+  metadataBase: new URL(siteConfig.url),
   title: "CCAP Zomba",
   description: "A Christ-centered church community in Zomba.",
   openGraph: {
     title: "CCAP Zomba",
     description: "A Christ-centered church community in Zomba.",
-    url: "https://ccapzomba.org",
-    siteName: "CCAP Zomba",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
     type: "website",
   },
 };

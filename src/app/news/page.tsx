@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ChevronRight, Newspaper } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
-const pageUrl = "https://ccapzomba.org/news";
+const pageUrl = absoluteUrl("/news");
 
 export const metadata: Metadata = {
   title: "News | CCAP Zomba",
@@ -99,8 +100,8 @@ const structuredData = {
       description: metadata.description,
       isPartOf: {
         "@type": "WebSite",
-        name: "CCAP Zomba",
-        url: "https://ccapzomba.org",
+        name: siteConfig.name,
+        url: siteConfig.url,
       },
     },
     {
@@ -110,7 +111,7 @@ const structuredData = {
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: "https://ccapzomba.org",
+          item: siteConfig.url,
         },
         {
           "@type": "ListItem",
@@ -133,11 +134,11 @@ const structuredData = {
           image: item.image,
           author: {
             "@type": "Organization",
-            name: "CCAP Zomba",
+            name: siteConfig.name,
           },
           publisher: {
             "@type": "Organization",
-            name: "CCAP Zomba",
+            name: siteConfig.name,
           },
         },
       })),

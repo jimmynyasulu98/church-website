@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ChevronRight, MapPin, UsersRound } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
-const pageUrl = "https://ccapzomba.org/districts";
+const pageUrl = absoluteUrl("/districts");
 
 export const metadata: Metadata = {
   title: "Districts | CCAP Zomba",
@@ -93,14 +94,14 @@ const structuredData = {
       description: metadata.description,
       isPartOf: {
         "@type": "WebSite",
-        name: "CCAP Zomba",
-        url: "https://ccapzomba.org",
+        name: siteConfig.name,
+        url: siteConfig.url,
       },
       about: {
         "@type": "Church",
-        name: "CCAP Zomba",
-        url: "https://ccapzomba.org",
-        email: "info@ccapzomba.org",
+        name: siteConfig.name,
+        url: siteConfig.url,
+        email: siteConfig.email,
         address: {
           "@type": "PostalAddress",
           addressLocality: "Zomba",
@@ -115,7 +116,7 @@ const structuredData = {
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: "https://ccapzomba.org",
+          item: siteConfig.url,
         },
         {
           "@type": "ListItem",

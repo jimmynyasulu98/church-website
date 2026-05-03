@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronRight, Play } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { SermonsBrowser } from "@/components/media/sermons-browser";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
-const pageUrl = "https://ccapzomba.org/sermons";
+const pageUrl = absoluteUrl("/sermons");
 
 export const metadata: Metadata = {
   title: "Sermons | CCAP Zomba",
@@ -35,6 +36,7 @@ const sermons = [
     title: "Walking by Faith",
     passage: "2 Corinthians 5:7",
     preacher: "Rev. John Phiri",
+    series: "Faith Foundations",
     date: "2026-05-12",
     displayDate: "12 May 2026",
     image:
@@ -44,6 +46,7 @@ const sermons = [
     title: "The Power of Prayer",
     passage: "Philippians 4:6-7",
     preacher: "Elder Chirimwemwe",
+    series: "Prayer Life",
     date: "2026-05-05",
     displayDate: "5 May 2026",
     image:
@@ -53,6 +56,7 @@ const sermons = [
     title: "Grace That Saves",
     passage: "Ephesians 2:8-9",
     preacher: "Rev. John Phiri",
+    series: "Grace and Salvation",
     date: "2026-04-28",
     displayDate: "28 Apr 2026",
     image:
@@ -62,6 +66,7 @@ const sermons = [
     title: "Trust in the Lord",
     passage: "Proverbs 3:5-6",
     preacher: "Elder Phiri",
+    series: "Faith Foundations",
     date: "2026-04-21",
     displayDate: "21 Apr 2026",
     image:
@@ -71,6 +76,7 @@ const sermons = [
     title: "Living a Holy Life",
     passage: "1 Peter 1:15-16",
     preacher: "Rev. John Phiri",
+    series: "Holy Living",
     date: "2026-04-14",
     displayDate: "14 Apr 2026",
     image:
@@ -102,8 +108,8 @@ const structuredData = {
       description: metadata.description,
       isPartOf: {
         "@type": "WebSite",
-        name: "CCAP Zomba",
-        url: "https://ccapzomba.org",
+        name: siteConfig.name,
+        url: siteConfig.url,
       },
     },
     {
@@ -113,7 +119,7 @@ const structuredData = {
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: "https://ccapzomba.org",
+          item: siteConfig.url,
         },
         {
           "@type": "ListItem",
@@ -134,13 +140,14 @@ const structuredData = {
           name: sermon.title,
           datePublished: sermon.date,
           about: sermon.passage,
+          genre: sermon.series,
           creator: {
             "@type": "Person",
             name: sermon.preacher,
           },
           publisher: {
             "@type": "Church",
-            name: "CCAP Zomba",
+            name: siteConfig.name,
           },
         },
       })),
@@ -197,56 +204,7 @@ export default function SermonsPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-wrap gap-6 text-sm font-black">
-          <span className="border-b-2 border-accent pb-2 text-accent">
-            Latest Sermons
-          </span>
-          <span className="pb-2 text-slate-500">By Series</span>
-          <span className="pb-2 text-slate-500">By Preacher</span>
-        </div>
-
-        <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-          {sermons.map((sermon) => (
-            <article
-              key={sermon.title}
-              className="grid gap-4 border-b border-slate-200 px-4 py-4 last:border-b-0 sm:grid-cols-[120px_1fr_auto] sm:items-center"
-            >
-              <div
-                className="h-24 rounded-md bg-cover bg-center sm:h-20"
-                style={{ backgroundImage: `url(${sermon.image})` }}
-                aria-label={`${sermon.title} sermon`}
-              />
-              <div>
-                <h2 className="text-base font-black">{sermon.title}</h2>
-                <p className="mt-1 text-sm font-semibold text-slate-700">
-                  {sermon.passage}
-                </p>
-                <p className="mt-1 text-sm text-slate-600">{sermon.preacher}</p>
-                <p className="mt-1 text-sm text-slate-600">
-                  <time dateTime={sermon.date}>{sermon.displayDate}</time>
-                </p>
-              </div>
-              <Button
-                asChild
-                variant="outline"
-                className="h-10 rounded-sm border-accent px-5 font-black text-accent"
-              >
-                <Link href="/#contact">
-                  <Play className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Watch
-                </Link>
-              </Button>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-8 flex justify-center">
-          <Button asChild className="h-12 rounded-sm bg-accent px-8 font-black">
-            <Link href="/#contact">View All Sermons</Link>
-          </Button>
-        </div>
-      </section>
+      <SermonsBrowser sermons={sermons} />
 
       <section className="mx-auto max-w-5xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="grid gap-5 border-t border-slate-200 pt-8 md:grid-cols-2">
