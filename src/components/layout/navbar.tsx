@@ -165,15 +165,18 @@ export function Navbar() {
               <Menu className="h-5 w-5" aria-hidden="true" />
             </Button>
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent className="flex max-w-[min(22rem,calc(100vw-2rem))] flex-col p-5">
             <SheetHeader>
               <SheetTitle>CCAP Zomba</SheetTitle>
             </SheetHeader>
-            <nav className="mt-8 grid gap-2" aria-label="Mobile primary">
+            <nav
+              className="mt-5 grid flex-1 gap-1 overflow-y-auto pb-4 pr-1"
+              aria-label="Mobile primary"
+            >
               {primaryNavLinks.map((link) =>
                 link.children ? (
-                  <div key={link.label} className="rounded-md bg-slate-50 p-2">
-                    <p className="px-2 pb-1 text-xs font-black uppercase tracking-wide text-slate-500">
+                  <div key={link.label} className="rounded-md bg-slate-50 p-1.5">
+                    <p className="px-2 pb-1 text-[11px] font-black uppercase tracking-wide text-slate-500">
                       {link.label}
                     </p>
                     <div className="grid gap-1">
@@ -181,7 +184,7 @@ export function Navbar() {
                         <SheetClose asChild key={child.label}>
                           <Link
                             href={child.href}
-                            className="rounded-md px-3 py-2.5 text-base font-bold text-slate-700 transition hover:bg-white hover:text-primary"
+                            className="rounded-md px-3 py-2 text-[15px] font-bold text-slate-700 transition hover:bg-white hover:text-primary"
                           >
                             {child.label}
                           </Link>
@@ -194,7 +197,7 @@ export function Navbar() {
                     <Link
                       href={link.href}
                       className={cn(
-                        "rounded-md px-3 py-3 text-base font-bold text-slate-700 transition hover:bg-slate-100 hover:text-primary",
+                        "rounded-md px-3 py-2.5 text-[15px] font-bold text-slate-700 transition hover:bg-slate-100 hover:text-primary",
                         isCurrentPage(link.href) && "bg-blue-50 text-accent",
                       )}
                     >
@@ -205,7 +208,7 @@ export function Navbar() {
               )}
             </nav>
             <SheetClose asChild>
-              <Button asChild className="mt-8 w-full">
+              <Button asChild className="mt-3 h-11 w-full shrink-0 rounded-sm">
                 <Link href="/new-here">I&apos;m New Here</Link>
               </Button>
             </SheetClose>
