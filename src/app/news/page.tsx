@@ -215,7 +215,7 @@ export default function NewsPage() {
 
         <div className="mt-8 flex justify-center">
           <Button asChild className="h-12 rounded-sm bg-accent px-8 font-black">
-            <Link href="/#contact">
+            <Link href="/contact">
               <Newspaper className="mr-2 h-4 w-4" aria-hidden="true" />
               View All News
             </Link>

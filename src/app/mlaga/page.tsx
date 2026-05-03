@@ -220,7 +220,7 @@ export default function MlagaPage() {
             </p>
           </div>
           <Button asChild className="h-12 rounded-sm bg-accent px-7 font-black">
-            <Link href="/#contact">
+            <Link href="/contact">
               <CalendarDays className="mr-2 h-4 w-4" aria-hidden="true" />
               Notify Mlaga Hosts
             </Link>

@@ -207,7 +207,7 @@ export function LandingPage() {
               className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:gap-4"
             >
               <Button asChild className="h-14 w-full rounded-sm bg-accent sm:w-auto sm:min-w-48">
-                <Link href="#new-here">Plan a Visit</Link>
+                <Link href="/new-here">Plan a Visit</Link>
               </Button>
               <Button
                 asChild
@@ -252,7 +252,7 @@ export function LandingPage() {
                     {pillar.text}
                   </p>
                   <Link
-                    href="#new-here"
+                    href="/new-here"
                     className="mt-5 inline-flex text-sm font-bold text-accent"
                   >
                     Learn More →
@@ -289,7 +289,7 @@ export function LandingPage() {
               Join us this Sunday and experience God’s love.
             </p>
             <Button asChild className="mt-8 rounded-sm bg-accent">
-              <Link href="#contact">Learn More</Link>
+              <Link href="/new-here">Request to Join</Link>
             </Button>
           </div>
           <div
@@ -342,7 +342,7 @@ export function LandingPage() {
               </p>
             </div>
             <Button asChild className="mt-8 rounded-sm bg-accent">
-              <Link href="#contact">Read Full Message</Link>
+              <Link href="/contact">Read Full Message</Link>
             </Button>
           </div>
         </motion.div>

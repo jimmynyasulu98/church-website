@@ -57,7 +57,7 @@ export function Navbar() {
             </span>
             <span className="hidden items-center gap-2 md:flex">
               <Phone className="h-3.5 w-3.5" aria-hidden="true" />
-              +265 88 123 4567
+              {siteConfig.phone}
             </span>
           </div>
           <div className="hidden items-center gap-4 md:flex">
@@ -150,7 +150,7 @@ export function Navbar() {
 
         <div className="hidden lg:block">
           <Button asChild className="h-11 rounded-sm px-5 text-xs font-black">
-            <Link href="/#new-here">I&apos;m New Here</Link>
+            <Link href="/new-here">I&apos;m New Here</Link>
           </Button>
         </div>
 
@@ -206,7 +206,7 @@ export function Navbar() {
             </nav>
             <SheetClose asChild>
               <Button asChild className="mt-8 w-full">
-                <Link href="/#new-here">I&apos;m New Here</Link>
+                <Link href="/new-here">I&apos;m New Here</Link>
               </Button>
             </SheetClose>
           </SheetContent>

@@ -48,7 +48,7 @@ const givingOptions = [
 const bankDetails = [
   ["Bank", "NBS Bank"],
   ["Account Name", "CCAP Zomba Presbytery"],
-  ["Account Number", "1560201000"],
+  ["Account Number", ""],
   ["Branch", "Zomba Branch"],
 ];
 

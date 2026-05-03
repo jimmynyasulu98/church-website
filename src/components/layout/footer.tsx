@@ -71,11 +71,11 @@ export function Footer() {
           <div className="mt-6 space-y-5 text-sm text-blue-50">
             <p className="flex items-center gap-3">
               <MapPin className="h-4 w-4 text-white" />
-              Ndirande Road, Zomba, Malawi
+              {siteConfig.address}
             </p>
             <p className="flex items-center gap-3">
               <Phone className="h-4 w-4 text-white" />
-              +265 88 123 4567
+              {siteConfig.phone}
             </p>
             <p className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-white" />

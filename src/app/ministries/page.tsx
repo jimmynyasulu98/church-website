@@ -243,7 +243,7 @@ export default function MinistriesPage() {
             </p>
           </div>
           <Button asChild className="h-12 rounded-sm bg-accent px-7 font-black">
-            <Link href="/#contact">
+            <Link href="/contact">
               <Mail className="mr-2 h-4 w-4" aria-hidden="true" />
               Contact Us
             </Link>
