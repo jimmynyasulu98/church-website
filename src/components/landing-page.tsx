@@ -477,7 +477,7 @@ export function LandingPage() {
               or upload your receipt online.
             </p>
             <Button asChild className="mt-8 rounded-sm bg-accent">
-              <Link href="#contact">Give / Upload Receipt</Link>
+              <Link href="/giving">Give / Upload Receipt</Link>
             </Button>
           </div>
         </motion.div>
