@@ -22,6 +22,7 @@ export const primaryNavLinks: NavLink[] = [
   { label: "Giving", href: "/giving" },
   { label: "Vacancies", href: "/vacancies" },
   { label: "Contact", href: "/contact" },
+  { label: "Login", href: "/login" },
 ];
 
 export const footerQuickLinks: NavLink[] = [
@@ -35,4 +36,5 @@ export const footerQuickLinks: NavLink[] = [
   { label: "Giving", href: "/giving" },
   { label: "Vacancies", href: "/vacancies" },
   { label: "Contact Us", href: "/contact" },
+  { label: "Login", href: "/login" },
 ];

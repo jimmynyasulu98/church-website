@@ -107,7 +107,7 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     className={cn(
-                      "flex items-center gap-1 border-b-2 border-transparent px-3 py-7 text-sm font-extrabold text-primary transition hover:border-accent hover:text-accent",
+                      "flex items-center gap-1 border-b-2 border-transparent px-2 py-7 text-sm font-extrabold text-primary transition hover:border-accent hover:text-accent xl:px-3",
                       isActive && "border-accent text-accent",
                     )}
                     aria-haspopup="true"
@@ -138,7 +138,7 @@ export function Navbar() {
                 key={link.label}
                 href={link.href}
                 className={cn(
-                  "border-b-2 border-transparent px-3 py-7 text-sm font-extrabold text-primary transition hover:border-accent hover:text-accent",
+                  "border-b-2 border-transparent px-2 py-7 text-sm font-extrabold text-primary transition hover:border-accent hover:text-accent xl:px-3",
                   isActive && "border-accent text-accent",
                 )}
               >
@@ -149,7 +149,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden lg:block">
-          <Button asChild className="h-11 rounded-sm px-5 text-xs font-black">
+          <Button asChild className="h-11 rounded-sm px-4 text-xs font-black xl:px-5">
             <Link href="/new-here">I&apos;m New Here</Link>
           </Button>
         </div>
