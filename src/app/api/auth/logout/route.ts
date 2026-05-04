@@ -1,9 +1,9 @@
-import { clearSessionCookie } from "@/lib/auth";
+import { revokeCurrentSession } from "@/lib/auth";
 import { ok } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
 export async function POST() {
-  clearSessionCookie();
+  await revokeCurrentSession();
   return ok({ signedOut: true });
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { fail, ok, parseJson } from "@/lib/api";
-import { createSessionToken, setSessionCookie, verifyPassword } from "@/lib/auth";
+import { createSession, setSessionCookie, verifyPassword } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       return fail("Invalid email or password.", 401);
     }
 
-    const token = await createSessionToken(user.id);
+    const token = await createSession(user.id, request);
     setSessionCookie(token);
 
     return ok({

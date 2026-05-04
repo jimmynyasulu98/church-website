@@ -1,19 +1,24 @@
 import bcrypt from "bcryptjs";
-import { jwtVerify, SignJWT } from "jose";
+import { createHash, randomBytes } from "crypto";
 import { cookies } from "next/headers";
 
 import { prisma } from "@/lib/db";
 
 const cookieName = "ccap_session";
+const sessionMaxAgeSeconds = 60 * 60 * 24 * 7;
 
-function jwtSecret() {
-  const secret = process.env.JWT_SECRET;
+function hashSessionToken(token: string) {
+  return createHash("sha256").update(token).digest("hex");
+}
 
-  if (!secret) {
-    throw new Error("JWT_SECRET is not configured.");
+function getClientIp(request?: Request) {
+  const forwardedFor = request?.headers.get("x-forwarded-for");
+
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0]?.trim();
   }
 
-  return new TextEncoder().encode(secret);
+  return request?.headers.get("x-real-ip") ?? undefined;
 }
 
 export async function hashPassword(password: string) {
@@ -24,36 +29,61 @@ export async function verifyPassword(password: string, hash: string) {
   return bcrypt.compare(password, hash);
 }
 
-export async function createSessionToken(userId: string) {
-  return new SignJWT({ sub: userId })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("7d")
-    .sign(jwtSecret());
+export async function createSession(userId: string, request?: Request) {
+  const token = randomBytes(32).toString("base64url");
+  const tokenHash = hashSessionToken(token);
+  const expiresAt = new Date(Date.now() + sessionMaxAgeSeconds * 1000);
+
+  await prisma.session.create({
+    data: {
+      userId,
+      tokenHash,
+      expiresAt,
+      userAgent: request?.headers.get("user-agent") ?? undefined,
+      ipAddress: getClientIp(request),
+    },
+  });
+
+  return token;
 }
 
-export async function getCurrentUser() {
+export async function getCurrentSession() {
   const token = cookies().get(cookieName)?.value;
 
   if (!token) {
     return null;
   }
 
-  try {
-    const verified = await jwtVerify(token, jwtSecret());
-    const userId = verified.payload.sub;
+  const session = await prisma.session.findUnique({
+    where: { tokenHash: hashSessionToken(token) },
+    include: {
+      user: {
+        include: { member: { include: { district: true } }, permissions: true },
+      },
+    },
+  });
 
-    if (!userId) {
-      return null;
-    }
-
-    return prisma.user.findUnique({
-      where: { id: userId },
-      include: { member: { include: { district: true } }, permissions: true },
-    });
-  } catch {
+  if (
+    !session ||
+    session.revokedAt ||
+    session.expiresAt <= new Date() ||
+    session.user.status !== "ACTIVE"
+  ) {
     return null;
   }
+
+  await prisma.session.update({
+    where: { id: session.id },
+    data: { lastSeenAt: new Date() },
+  });
+
+  return session;
+}
+
+export async function getCurrentUser() {
+  const session = await getCurrentSession();
+
+  return session?.user ?? null;
 }
 
 export function setSessionCookie(token: string) {
@@ -62,12 +92,28 @@ export function setSessionCookie(token: string) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: sessionMaxAgeSeconds,
   });
 }
 
 export function clearSessionCookie() {
   cookies().delete(cookieName);
+}
+
+export async function revokeCurrentSession() {
+  const token = cookies().get(cookieName)?.value;
+
+  if (token) {
+    await prisma.session.updateMany({
+      where: {
+        tokenHash: hashSessionToken(token),
+        revokedAt: null,
+      },
+      data: { revokedAt: new Date() },
+    });
+  }
+
+  clearSessionCookie();
 }
 
 export function canManageContent(role: string) {

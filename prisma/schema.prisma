@@ -62,35 +62,36 @@ model Church {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  users      User[]
-  districts  District[]
-  ministries Ministry[]
-  events     Event[]
-  news       NewsArticle[]
-  sermons    Sermon[]
-  mlagaItems MlagaSchedule[]
-  vacancies  Vacancy[]
-  apiClients ApiClient[]
-  joinRequests MembershipRequest[]
+  users           User[]
+  districts       District[]
+  ministries      Ministry[]
+  events          Event[]
+  news            NewsArticle[]
+  sermons         Sermon[]
+  mlagaItems      MlagaSchedule[]
+  vacancies       Vacancy[]
+  apiClients      ApiClient[]
+  joinRequests    MembershipRequest[]
   contactMessages ContactMessage[]
 }
 
 model User {
-  id            String     @id @default(cuid())
-  churchId      String
-  email         String     @unique
-  passwordHash  String
-  role          UserRole   @default(MEMBER)
-  status        UserStatus @default(ACTIVE)
-  firstName     String
-  lastName      String
-  phone         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  id           String     @id @default(cuid())
+  churchId     String
+  email        String     @unique
+  passwordHash String
+  role         UserRole   @default(MEMBER)
+  status       UserStatus @default(ACTIVE)
+  firstName    String
+  lastName     String
+  phone        String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
   church        Church            @relation(fields: [churchId], references: [id], onDelete: Cascade)
   member        MemberProfile?
   permissions   UserPermission[]
+  sessions      Session[]
   offerings     OfferingReceipt[]
   newsAuthored  NewsArticle[]     @relation("NewsAuthor")
   eventsMade    Event[]           @relation("EventCreator")
@@ -100,20 +101,38 @@ model User {
   @@index([churchId, role])
 }
 
+model Session {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique
+  userAgent  String?
+  ipAddress  String?
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastSeenAt DateTime  @default(now())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
+}
+
 model Permission {
   id          String @id @default(cuid())
   key         String @unique
   description String
 
-  users       UserPermission[]
+  users UserPermission[]
 }
 
 model UserPermission {
   userId       String
   permissionId String
 
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
   @@id([userId, permissionId])
 }
@@ -127,31 +146,31 @@ model District {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  church      Church          @relation(fields: [churchId], references: [id], onDelete: Cascade)
-  members     MemberProfile[]
-  mlagaItems  MlagaSchedule[]
+  church     Church          @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  members    MemberProfile[]
+  mlagaItems MlagaSchedule[]
 
   @@unique([churchId, name])
 }
 
 model MemberProfile {
-  id                 String               @id @default(cuid())
-  userId             String               @unique
-  churchId           String
-  districtId         String?
-  memberNumber       String?
-  gender             String?
-  maritalStatus      String?
-  previousChurch     String?
-  currentLocation    String?
-  baptizedAt         String?
-  currentWork        String?
-  transferType       TransferType?
-  transferLetterUrl  String?
-  joinedAt           DateTime?
-  bio                String?
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
+  id                String        @id @default(cuid())
+  userId            String        @unique
+  churchId          String
+  districtId        String?
+  memberNumber      String?
+  gender            String?
+  maritalStatus     String?
+  previousChurch    String?
+  currentLocation   String?
+  baptizedAt        String?
+  currentWork       String?
+  transferType      TransferType?
+  transferLetterUrl String?
+  joinedAt          DateTime?
+  bio               String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   district           District?            @relation(fields: [districtId], references: [id])
@@ -172,7 +191,7 @@ model Ministry {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  church      Church        @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
 
   @@unique([churchId, slug])
 }
@@ -192,8 +211,8 @@ model Event {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  church      Church        @relation(fields: [churchId], references: [id], onDelete: Cascade)
-  createdBy   User?         @relation("EventCreator", fields: [createdById], references: [id])
+  church    Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  createdBy User?  @relation("EventCreator", fields: [createdById], references: [id])
 
   @@unique([churchId, slug])
   @@index([churchId, startsAt])
@@ -213,8 +232,8 @@ model NewsArticle {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  church      Church        @relation(fields: [churchId], references: [id], onDelete: Cascade)
-  author      User?         @relation("NewsAuthor", fields: [authorId], references: [id])
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  author User?  @relation("NewsAuthor", fields: [authorId], references: [id])
 
   @@unique([churchId, slug])
   @@index([churchId, publishedAt])
@@ -236,8 +255,8 @@ model Sermon {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  church      Church        @relation(fields: [churchId], references: [id], onDelete: Cascade)
-  createdBy   User?         @relation("SermonCreator", fields: [createdById], references: [id])
+  church    Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  createdBy User?  @relation("SermonCreator", fields: [createdById], references: [id])
 
   @@unique([churchId, slug])
   @@index([churchId, preachedAt])
@@ -255,8 +274,8 @@ model MlagaSchedule {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  church     Church    @relation(fields: [churchId], references: [id], onDelete: Cascade)
-  district   District? @relation(fields: [districtId], references: [id])
+  church   Church    @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  district District? @relation(fields: [districtId], references: [id])
 
   @@index([churchId, startsAt])
 }
@@ -276,8 +295,8 @@ model Vacancy {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
-  church       Church        @relation(fields: [churchId], references: [id], onDelete: Cascade)
-  createdBy    User?         @relation("VacancyCreator", fields: [createdById], references: [id])
+  church    Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  createdBy User?  @relation("VacancyCreator", fields: [createdById], references: [id])
 
   @@unique([churchId, slug])
 }
@@ -296,7 +315,7 @@ model OfferingReceipt {
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
 
-  user       User?         @relation(fields: [userId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 
   @@index([churchId, userId])
   @@index([churchId, createdAt])
@@ -326,7 +345,7 @@ model MembershipRequest {
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
 
-  church               Church        @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
 
   @@index([churchId, status])
 }
@@ -343,7 +362,7 @@ model ContactMessage {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
-  church    Church        @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
 
   @@index([churchId, status])
 }
@@ -358,7 +377,7 @@ model ApiClient {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  church    Church   @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
 
   @@index([churchId, active])
 }
@@ -371,5 +390,5 @@ model MemberVerification {
   result           String
   checkedAt        DateTime @default(now())
 
-  memberProfile    MemberProfile @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+  memberProfile MemberProfile @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
 }
