@@ -41,7 +41,7 @@ export function JoinRequestForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="First Name" id="firstName" required autoComplete="given-name" />
+        <Field label="First Name"  id="firstName" required autoComplete="given-name" />
         <Field label="Last Name" id="lastName" required autoComplete="family-name" />
       </div>
 
