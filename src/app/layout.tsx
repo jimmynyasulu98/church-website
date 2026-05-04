@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Footer } from "@/components/layout/footer";
-import { Navbar } from "@/components/layout/navbar";
-import { PageTransition } from "@/components/providers/page-transition";
+import { AppShell } from "@/components/layout/app-shell";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -41,9 +39,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans antialiased`}
       >
         <div className="flex min-h-screen flex-col">
-          <Navbar />
-          <PageTransition>{children}</PageTransition>
-          <Footer />
+          <AppShell>{children}</AppShell>
         </div>
       </body>
     </html>
