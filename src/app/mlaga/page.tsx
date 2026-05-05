@@ -9,9 +9,12 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { getMlagaSchedule, type MlagaItem } from "@/lib/content";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
 const pageUrl = absoluteUrl("/mlaga");
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Mlaga Schedule | CCAP Zomba",
@@ -38,57 +41,6 @@ export const metadata: Metadata = {
   },
 };
 
-const mlagaSchedule = [
-  {
-    district: "District 1",
-    area: "Chinamwali",
-    host: "Mr. Banda",
-    preacher: "Elder Phiri",
-    dateTime: "Wed, 15 May | 6:00 PM",
-    venue: "Chinamwali",
-  },
-  {
-    district: "District 2",
-    area: "Ndirande",
-    host: "Mrs. Kachale",
-    preacher: "Elder Chirimwemwe",
-    dateTime: "Wed, 15 May | 6:00 PM",
-    venue: "Chipembere",
-  },
-  {
-    district: "District 3",
-    area: "Kadango",
-    host: "Mr. Jere",
-    preacher: "Deaconess Thoko",
-    dateTime: "Wed, 15 May | 6:00 PM",
-    venue: "Kadango",
-  },
-  {
-    district: "District 4",
-    area: "Zomba Town",
-    host: "Mrs. Mvula",
-    preacher: "Elder Mambo",
-    dateTime: "Wed, 15 May | 6:00 PM",
-    venue: "Zomba Town",
-  },
-  {
-    district: "District 5",
-    area: "Mt. Bise",
-    host: "Mr. Phiri",
-    preacher: "Rev. Chigona",
-    dateTime: "Wed, 15 May | 6:00 PM",
-    venue: "Mt. Bise",
-  },
-  {
-    district: "District 6",
-    area: "Kachere",
-    host: "Mrs. Lungu",
-    preacher: "Elder Mbewe",
-    dateTime: "Wed, 15 May | 6:00 PM",
-    venue: "Kachere",
-  },
-];
-
 const faqs = [
   {
     question: "What is Mlaga at CCAP Zomba?",
@@ -102,75 +54,80 @@ const faqs = [
   },
 ];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "CollectionPage",
-      "@id": `${pageUrl}#webpage`,
-      url: pageUrl,
-      name: "Mlaga Schedule | CCAP Zomba",
-      description: metadata.description,
-      isPartOf: {
-        "@type": "WebSite",
-        name: siteConfig.name,
-        url: siteConfig.url,
-      },
-      about: {
-        "@type": "Church",
-        name: siteConfig.name,
-        url: siteConfig.url,
-        email: siteConfig.email,
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Zomba",
-          addressCountry: "MW",
+function getStructuredData(mlagaSchedule: MlagaItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: "Mlaga Schedule | CCAP Zomba",
+        description: metadata.description,
+        isPartOf: {
+          "@type": "WebSite",
+          name: siteConfig.name,
+          url: siteConfig.url,
+        },
+        about: {
+          "@type": "Church",
+          name: siteConfig.name,
+          url: siteConfig.url,
+          email: siteConfig.email,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Zomba",
+            addressCountry: "MW",
+          },
         },
       },
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: siteConfig.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Mlaga",
+            item: pageUrl,
+          },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: "This Week's CCAP Zomba Mlaga",
+        numberOfItems: mlagaSchedule.length,
+        itemListElement: mlagaSchedule.map((item, index) => ({
           "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: siteConfig.url,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Mlaga",
-          item: pageUrl,
-        },
-      ],
-    },
-    {
-      "@type": "ItemList",
-      name: "This Week's CCAP Zomba Mlaga",
-      numberOfItems: mlagaSchedule.length,
-      itemListElement: mlagaSchedule.map((item, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: `${item.district} Mlaga`,
-        description: `${item.district} meets at ${item.venue}. Host: ${item.host}. Preacher: ${item.preacher}. Time: ${item.dateTime}.`,
-      })),
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
-    },
-  ],
-};
+          position: index + 1,
+          name: `${item.district} Mlaga`,
+          description: `${item.district} meets at ${item.venue}. Host: ${item.host}. Preacher: ${item.preacher}. Time: ${item.dateTime}.`,
+        })),
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      },
+    ],
+  };
+}
 
-export default function MlagaPage() {
+export default async function MlagaPage() {
+  const mlagaSchedule = await getMlagaSchedule();
+  const structuredData = getStructuredData(mlagaSchedule);
+
   return (
     <div className="bg-white text-primary">
       <script
@@ -238,7 +195,7 @@ export default function MlagaPage() {
           <div className="divide-y divide-slate-200">
             {mlagaSchedule.map((item) => (
               <article
-                key={item.district}
+                key={item.id}
                 className="grid gap-4 px-5 py-5 md:grid-cols-[1.2fr_1fr_1.15fr_1.15fr_1fr] md:items-center"
               >
                 <div className="flex items-center gap-3">

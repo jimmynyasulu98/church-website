@@ -3,9 +3,12 @@ import Link from "next/link";
 import { ChevronRight, Newspaper } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { getNewsItems, type NewsItem } from "@/lib/content";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
 const pageUrl = absoluteUrl("/news");
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "News | CCAP Zomba",
@@ -31,51 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-const newsItems = [
-  {
-    title: "CCAP Zomba Hosts Successful Youth Conference",
-    date: "2026-05-18",
-    displayDate: "18 May 2026",
-    image:
-      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Baptism Service Brings Joy to Many Families",
-    date: "2026-05-10",
-    displayDate: "10 May 2026",
-    image:
-      "https://images.unsplash.com/photo-1515169067865-5387ec356754?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Women's Fellowship Outreach Program",
-    date: "2026-05-03",
-    displayDate: "3 May 2026",
-    image:
-      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Church Renovation Project Underway",
-    date: "2026-04-28",
-    displayDate: "28 Apr 2026",
-    image:
-      "https://images.unsplash.com/photo-1520637836862-4d197d17c36a?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Sunday School Easter Celebration",
-    date: "2026-04-15",
-    displayDate: "15 Apr 2026",
-    image:
-      "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "New Members Welcome Service",
-    date: "2026-04-07",
-    displayDate: "7 Apr 2026",
-    image:
-      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80",
-  },
-];
-
 const faqs = [
   {
     question: "What kind of news does CCAP Zomba publish?",
@@ -89,75 +47,80 @@ const faqs = [
   },
 ];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "CollectionPage",
-      "@id": `${pageUrl}#webpage`,
-      url: pageUrl,
-      name: "News | CCAP Zomba",
-      description: metadata.description,
-      isPartOf: {
-        "@type": "WebSite",
-        name: siteConfig.name,
-        url: siteConfig.url,
+function getStructuredData(newsItems: NewsItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: "News | CCAP Zomba",
+        description: metadata.description,
+        isPartOf: {
+          "@type": "WebSite",
+          name: siteConfig.name,
+          url: siteConfig.url,
+        },
       },
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: siteConfig.url,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "News",
-          item: pageUrl,
-        },
-      ],
-    },
-    {
-      "@type": "ItemList",
-      name: "CCAP Zomba News",
-      itemListElement: newsItems.map((item, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        item: {
-          "@type": "NewsArticle",
-          headline: item.title,
-          datePublished: item.date,
-          image: item.image,
-          author: {
-            "@type": "Organization",
-            name: siteConfig.name,
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: siteConfig.url,
           },
-          publisher: {
-            "@type": "Organization",
-            name: siteConfig.name,
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "News",
+            item: pageUrl,
           },
-        },
-      })),
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
-    },
-  ],
-};
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: "CCAP Zomba News",
+        itemListElement: newsItems.map((item, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          item: {
+            "@type": "NewsArticle",
+            headline: item.title,
+            datePublished: item.date,
+            image: item.image,
+            author: {
+              "@type": "Organization",
+              name: siteConfig.name,
+            },
+            publisher: {
+              "@type": "Organization",
+              name: siteConfig.name,
+            },
+          },
+        })),
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      },
+    ],
+  };
+}
 
-export default function NewsPage() {
+export default async function NewsPage() {
+  const newsItems = await getNewsItems();
+  const structuredData = getStructuredData(newsItems);
+
   return (
     <div className="bg-white text-primary">
       <script
@@ -195,7 +158,7 @@ export default function NewsPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {newsItems.map((item) => (
             <article
-              key={item.title}
+              key={item.id}
               className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200"
             >
               <div

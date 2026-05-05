@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import type { HomeEventItem, MlagaItem, SermonItem } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 const serviceTimes = [
@@ -53,57 +54,6 @@ const pillars = [
   },
 ];
 
-const mlagaItems = [
-  {
-    name: "District 1",
-    host: "Mr. Banda",
-    preacher: "Elder Phiri",
-    date: "Wed, 15 May 2024",
-    time: "6:00 PM",
-    location: "Chinamwali",
-  },
-  {
-    name: "District 2",
-    host: "Mrs. Kachale",
-    preacher: "Elder Chirimwemwe",
-    date: "Wed, 15 May 2024",
-    time: "6:00 PM",
-    location: "Chipembere",
-  },
-  {
-    name: "District 3",
-    host: "Mr. Jere",
-    preacher: "Deaconess Thoko",
-    date: "Wed, 15 May 2024",
-    time: "6:00 PM",
-    location: "Kadango",
-  },
-];
-
-const events = [
-  {
-    month: "MAY",
-    day: "18",
-    title: "Youth Conference 2024",
-    detail: "18 May 2024 - 20 May 2024",
-    place: "CCAP Zomba Main Hall",
-  },
-  {
-    month: "MAY",
-    day: "26",
-    title: "Women's Fellowship",
-    detail: "26 May 2024 - 10:00 AM",
-    place: "District 2",
-  },
-  {
-    month: "JUN",
-    day: "02",
-    title: "Communion Sunday",
-    detail: "02 June 2024 - All Services",
-    place: "CCAP Zomba",
-  },
-];
-
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
   show: { opacity: 1, y: 0 },
@@ -112,9 +62,11 @@ const fadeUp = {
 function SectionHeader({
   title,
   action,
+  actionHref = "#home",
 }: {
   title: string;
   action?: string;
+  actionHref?: string;
 }) {
   return (
     <div className="mb-5 flex items-center justify-between">
@@ -126,7 +78,7 @@ function SectionHeader({
       </div>
       {action ? (
         <Link
-          href="#home"
+          href={actionHref}
           className="text-sm font-bold text-primary transition hover:text-accent"
         >
           {action} →
@@ -136,7 +88,15 @@ function SectionHeader({
   );
 }
 
-export function LandingPage() {
+export function LandingPage({
+  mlagaItems,
+  events,
+  latestSermon,
+}: {
+  mlagaItems: MlagaItem[];
+  events: HomeEventItem[];
+  latestSermon: SermonItem | null;
+}) {
   return (
     <div className="bg-white text-primary">
       <section
@@ -362,7 +322,7 @@ export function LandingPage() {
               className="group relative h-44 overflow-hidden rounded-md bg-cover bg-center"
               style={{
                 backgroundImage:
-                  "url(https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=900&q=80)",
+                  `url(${latestSermon?.image ?? "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=900&q=80"})`,
               }}
             >
               <div className="absolute inset-0 bg-primary/20" />
@@ -373,15 +333,21 @@ export function LandingPage() {
               </div>
             </div>
           </div>
-          <h3 className="mt-5 text-2xl font-extrabold">Walking by Faith</h3>
-          <p className="mt-2 text-base text-slate-700">2 Corinthians 5:7</p>
-          <p className="mt-3 text-sm font-bold">Rev. John Phiri</p>
+          <h3 className="mt-5 text-2xl font-extrabold">
+            {latestSermon?.title ?? "Latest Sermon"}
+          </h3>
+          <p className="mt-2 text-base text-slate-700">
+            {latestSermon?.passage ?? "Browse recent messages"}
+          </p>
+          <p className="mt-3 text-sm font-bold">
+            {latestSermon?.preacher ?? "CCAP Zomba"}
+          </p>
           <div className="mt-6 flex gap-3">
             <Button asChild className="rounded-sm">
-              <Link href="#sermons">Watch Now</Link>
+              <Link href="/sermons">Watch Now</Link>
             </Button>
             <Button asChild variant="outline" className="rounded-sm">
-              <Link href="#sermons">Sermon Notes</Link>
+              <Link href="/sermons">Sermon Notes</Link>
             </Button>
           </div>
         </motion.div>
@@ -391,11 +357,15 @@ export function LandingPage() {
           variants={fadeUp}
           className="border-y border-slate-200 py-8 lg:border-x lg:border-y-0 lg:px-8 lg:py-0"
         >
-          <SectionHeader title="This Week's Mlaga" action="View All Schedules" />
+          <SectionHeader
+            title="This Week's Mlaga"
+            action="View All Schedules"
+            actionHref="/mlaga"
+          />
           <div className="space-y-5">
             {mlagaItems.map((item) => (
               <div
-                key={item.name}
+                key={item.id}
                 className="grid grid-cols-[auto_1fr_auto] gap-4 border-b border-slate-200 pb-5 last:border-b-0"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-50 text-accent">
@@ -424,7 +394,7 @@ export function LandingPage() {
             ))}
           </div>
           <Link
-            href="#mlaga"
+            href="/mlaga"
             className="mt-6 block text-center text-sm font-bold text-accent"
           >
             View All Districts →
@@ -432,11 +402,15 @@ export function LandingPage() {
         </motion.div>
 
         <motion.div id="events" variants={fadeUp}>
-          <SectionHeader title="Upcoming Events" action="View All Events" />
+          <SectionHeader
+            title="Upcoming Events"
+            action="View All Events"
+            actionHref="/events"
+          />
           <div className="space-y-5">
             {events.map((event) => (
               <div
-                key={event.title}
+                key={event.id}
                 className="grid grid-cols-[74px_1fr] gap-5 border-b border-slate-200 pb-5 last:border-b-0"
               >
                 <div className="rounded-md border border-slate-300 bg-white py-3 text-center">

@@ -5,11 +5,13 @@ import { ChevronRight } from "lucide-react";
 import {
   SendCvButton,
   VacanciesList,
-  type Vacancy,
 } from "@/components/vacancies/vacancies-list";
+import { getVacancies, type VacancyItem } from "@/lib/content";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
 const pageUrl = absoluteUrl("/vacancies");
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Vacancies | CCAP Zomba",
@@ -35,61 +37,6 @@ export const metadata: Metadata = {
   },
 };
 
-const vacancies: Vacancy[] = [
-  {
-    title: "Youth Ministry Coordinator",
-    type: "Full Time",
-    department: "Youth Ministry",
-    closingDate: "15 June 2026",
-    summary:
-      "Coordinate youth ministry programs, discipleship activities, meetings and outreach initiatives for CCAP Zomba.",
-    requirements: [
-      "Active Christian faith and commitment to youth discipleship.",
-      "Experience leading youth groups or ministry programs.",
-      "Strong communication, planning and teamwork skills.",
-    ],
-  },
-  {
-    title: "Accountant",
-    type: "Full Time",
-    department: "Finance",
-    closingDate: "15 June 2026",
-    summary:
-      "Support church financial administration, reporting, reconciliations and stewardship processes.",
-    requirements: [
-      "Accounting qualification or relevant finance experience.",
-      "Good knowledge of financial records and reporting.",
-      "High integrity and attention to detail.",
-    ],
-  },
-  {
-    title: "Administrative Assistant",
-    type: "Full Time",
-    department: "Administration",
-    closingDate: "15 June 2026",
-    summary:
-      "Assist the church office with records, correspondence, scheduling and member support.",
-    requirements: [
-      "Strong organizational and computer skills.",
-      "Professional communication and confidentiality.",
-      "Experience in office administration is preferred.",
-    ],
-  },
-  {
-    title: "Choir Director",
-    type: "Part Time",
-    department: "Music Ministry",
-    closingDate: "15 June 2026",
-    summary:
-      "Lead choir rehearsals, coordinate music selections and support worship services.",
-    requirements: [
-      "Experience directing a church choir or worship group.",
-      "Ability to read or arrange music is an advantage.",
-      "Commitment to worship ministry and teamwork.",
-    ],
-  },
-];
-
 const faqs = [
   {
     question: "How do I apply for a CCAP Zomba vacancy?",
@@ -103,75 +50,80 @@ const faqs = [
   },
 ];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "CollectionPage",
-      "@id": `${pageUrl}#webpage`,
-      url: pageUrl,
-      name: "Vacancies | CCAP Zomba",
-      description: metadata.description,
-      isPartOf: {
-        "@type": "WebSite",
-        name: siteConfig.name,
-        url: siteConfig.url,
-      },
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: siteConfig.url,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Vacancies",
-          item: pageUrl,
-        },
-      ],
-    },
-    ...vacancies.map((vacancy) => ({
-      "@type": "JobPosting",
-      title: vacancy.title,
-      description: vacancy.summary,
-      datePosted: "2026-05-03",
-      validThrough: "2026-06-15",
-      employmentType: vacancy.type === "Full Time" ? "FULL_TIME" : "PART_TIME",
-      hiringOrganization: {
-        "@type": "Church",
-        name: siteConfig.name,
-        sameAs: siteConfig.url,
-      },
-      jobLocation: {
-        "@type": "Place",
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: siteConfig.address,
-          addressLocality: "Zomba",
-          addressCountry: "MW",
+function getStructuredData(vacancies: VacancyItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: "Vacancies | CCAP Zomba",
+        description: metadata.description,
+        isPartOf: {
+          "@type": "WebSite",
+          name: siteConfig.name,
+          url: siteConfig.url,
         },
       },
-    })),
-    {
-      "@type": "FAQPage",
-      mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: siteConfig.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Vacancies",
+            item: pageUrl,
+          },
+        ],
+      },
+      ...vacancies.map((vacancy) => ({
+        "@type": "JobPosting",
+        title: vacancy.title,
+        description: vacancy.summary,
+        datePosted: "2026-05-03",
+        validThrough: vacancy.closingDateIso,
+        employmentType: vacancy.type === "Full Time" ? "FULL_TIME" : "PART_TIME",
+        hiringOrganization: {
+          "@type": "Church",
+          name: siteConfig.name,
+          sameAs: siteConfig.url,
+        },
+        jobLocation: {
+          "@type": "Place",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: siteConfig.address,
+            addressLocality: "Zomba",
+            addressCountry: "MW",
+          },
         },
       })),
-    },
-  ],
-};
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      },
+    ],
+  };
+}
 
-export default function VacanciesPage() {
+export default async function VacanciesPage() {
+  const vacancies = await getVacancies();
+  const structuredData = getStructuredData(vacancies);
+
   return (
     <div className="bg-white text-primary">
       <script

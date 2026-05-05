@@ -3,9 +3,12 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 import { SermonsBrowser } from "@/components/media/sermons-browser";
+import { getSermons, type SermonItem } from "@/lib/content";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
 const pageUrl = absoluteUrl("/sermons");
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Sermons | CCAP Zomba",
@@ -31,59 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-const sermons = [
-  {
-    title: "Walking by Faith",
-    passage: "2 Corinthians 5:7",
-    preacher: "Rev. John Phiri",
-    series: "Faith Foundations",
-    date: "2026-05-12",
-    displayDate: "12 May 2026",
-    image:
-      "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    title: "The Power of Prayer",
-    passage: "Philippians 4:6-7",
-    preacher: "Elder Chirimwemwe",
-    series: "Prayer Life",
-    date: "2026-05-05",
-    displayDate: "5 May 2026",
-    image:
-      "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    title: "Grace That Saves",
-    passage: "Ephesians 2:8-9",
-    preacher: "Rev. John Phiri",
-    series: "Grace and Salvation",
-    date: "2026-04-28",
-    displayDate: "28 Apr 2026",
-    image:
-      "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    title: "Trust in the Lord",
-    passage: "Proverbs 3:5-6",
-    preacher: "Elder Phiri",
-    series: "Faith Foundations",
-    date: "2026-04-21",
-    displayDate: "21 Apr 2026",
-    image:
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    title: "Living a Holy Life",
-    passage: "1 Peter 1:15-16",
-    preacher: "Rev. John Phiri",
-    series: "Holy Living",
-    date: "2026-04-14",
-    displayDate: "14 Apr 2026",
-    image:
-      "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=700&q=80",
-  },
-];
-
 const faqs = [
   {
     question: "Where can I watch CCAP Zomba sermons?",
@@ -97,76 +47,81 @@ const faqs = [
   },
 ];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "CollectionPage",
-      "@id": `${pageUrl}#webpage`,
-      url: pageUrl,
-      name: "Sermons | CCAP Zomba",
-      description: metadata.description,
-      isPartOf: {
-        "@type": "WebSite",
-        name: siteConfig.name,
-        url: siteConfig.url,
+function getStructuredData(sermons: SermonItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: "Sermons | CCAP Zomba",
+        description: metadata.description,
+        isPartOf: {
+          "@type": "WebSite",
+          name: siteConfig.name,
+          url: siteConfig.url,
+        },
       },
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: siteConfig.url,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Sermons",
-          item: pageUrl,
-        },
-      ],
-    },
-    {
-      "@type": "ItemList",
-      name: "CCAP Zomba Sermons",
-      itemListElement: sermons.map((sermon, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        item: {
-          "@type": "CreativeWork",
-          name: sermon.title,
-          datePublished: sermon.date,
-          about: sermon.passage,
-          genre: sermon.series,
-          creator: {
-            "@type": "Person",
-            name: sermon.preacher,
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: siteConfig.url,
           },
-          publisher: {
-            "@type": "Church",
-            name: siteConfig.name,
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Sermons",
+            item: pageUrl,
           },
-        },
-      })),
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
-    },
-  ],
-};
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: "CCAP Zomba Sermons",
+        itemListElement: sermons.map((sermon, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          item: {
+            "@type": "CreativeWork",
+            name: sermon.title,
+            datePublished: sermon.date,
+            about: sermon.passage,
+            genre: sermon.series,
+            creator: {
+              "@type": "Person",
+              name: sermon.preacher,
+            },
+            publisher: {
+              "@type": "Church",
+              name: siteConfig.name,
+            },
+          },
+        })),
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      },
+    ],
+  };
+}
 
-export default function SermonsPage() {
+export default async function SermonsPage() {
+  const sermons = await getSermons();
+  const structuredData = getStructuredData(sermons);
+
   return (
     <div className="bg-white text-primary">
       <script

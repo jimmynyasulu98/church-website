@@ -3,9 +3,12 @@ import Link from "next/link";
 import { ChevronRight, MapPin, UsersRound } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { getDistricts, type DistrictItem } from "@/lib/content";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
 const pageUrl = absoluteUrl("/districts");
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Districts | CCAP Zomba",
@@ -31,45 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-const districts = [
-  {
-    name: "District 1",
-    description: "Serving the communities of Chinamwali and surrounding areas.",
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "District 2",
-    description: "Serving the areas of Ndirande and surrounding communities.",
-    image:
-      "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "District 3",
-    description: "Serving the areas of Kadango and surrounding communities.",
-    image:
-      "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "District 4",
-    description: "Serving the areas of Zomba Town and surrounding communities.",
-    image:
-      "https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "District 5",
-    description: "Serving the areas of Mt. Bise and surrounding communities.",
-    image:
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "District 6",
-    description: "Serving the areas of Kachere and surrounding communities.",
-    image:
-      "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=700&q=80",
-  },
-];
-
 const faqs = [
   {
     question: "How many districts does CCAP Zomba have?",
@@ -83,75 +47,80 @@ const faqs = [
   },
 ];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "CollectionPage",
-      "@id": `${pageUrl}#webpage`,
-      url: pageUrl,
-      name: "Districts | CCAP Zomba",
-      description: metadata.description,
-      isPartOf: {
-        "@type": "WebSite",
-        name: siteConfig.name,
-        url: siteConfig.url,
-      },
-      about: {
-        "@type": "Church",
-        name: siteConfig.name,
-        url: siteConfig.url,
-        email: siteConfig.email,
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Zomba",
-          addressCountry: "MW",
+function getStructuredData(districts: DistrictItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: "Districts | CCAP Zomba",
+        description: metadata.description,
+        isPartOf: {
+          "@type": "WebSite",
+          name: siteConfig.name,
+          url: siteConfig.url,
+        },
+        about: {
+          "@type": "Church",
+          name: siteConfig.name,
+          url: siteConfig.url,
+          email: siteConfig.email,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Zomba",
+            addressCountry: "MW",
+          },
         },
       },
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: siteConfig.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Districts",
+            item: pageUrl,
+          },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: "CCAP Zomba Districts",
+        numberOfItems: districts.length,
+        itemListElement: districts.map((district, index) => ({
           "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: siteConfig.url,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Districts",
-          item: pageUrl,
-        },
-      ],
-    },
-    {
-      "@type": "ItemList",
-      name: "CCAP Zomba Districts",
-      numberOfItems: districts.length,
-      itemListElement: districts.map((district, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: district.name,
-        description: district.description,
-      })),
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
-    },
-  ],
-};
+          position: index + 1,
+          name: district.name,
+          description: district.description,
+        })),
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      },
+    ],
+  };
+}
 
-export default function DistrictsPage() {
+export default async function DistrictsPage() {
+  const districts = await getDistricts();
+  const structuredData = getStructuredData(districts);
+
   return (
     <div className="bg-white text-primary">
       <script
@@ -191,10 +160,10 @@ export default function DistrictsPage() {
             Local Fellowship
           </p>
           <h2 className="mt-3 text-3xl font-black tracking-tight">
-            Our 6 Districts
+            Our {districts.length} Districts
           </h2>
           <p className="mt-5 text-base leading-7 text-slate-700">
-            CCAP Zomba is made up of six districts. Each district plays a vital
+            CCAP Zomba is made up of districts. Each district plays a vital
             role in the growth of the church and the community through pastoral
             care, fellowship, prayer and service.
           </p>
@@ -203,7 +172,7 @@ export default function DistrictsPage() {
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {districts.map((district, index) => (
             <article
-              key={district.name}
+              key={district.id}
               className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200"
             >
               <div className="relative">
@@ -218,6 +187,9 @@ export default function DistrictsPage() {
               </div>
               <div className="p-5">
                 <h3 className="text-base font-black">{district.name}</h3>
+                <p className="mt-1 text-sm font-semibold text-accent">
+                  {district.area}
+                </p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   {district.description}
                 </p>

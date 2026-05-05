@@ -3,9 +3,12 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 import { EventsBrowser } from "@/components/media/events-browser";
+import { getEvents, type EventItem } from "@/lib/content";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
 const pageUrl = absoluteUrl("/events");
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Events | CCAP Zomba",
@@ -31,109 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-const upcomingEvents = [
-  {
-    month: "MAY",
-    day: "18",
-    title: "Youth Conference 2026",
-    date: "2026-05-18",
-    displayDate: "18 May 2026 - 20 May 2026",
-    venue: "CCAP Zomba Main Hall",
-    description:
-      "A youth gathering for worship, teaching, prayer and fellowship.",
-    audience: "Youth, young adults and ministry leaders",
-    contact: "Youth Ministry",
-  },
-  {
-    month: "MAY",
-    day: "26",
-    title: "Women's Fellowship",
-    date: "2026-05-26",
-    displayDate: "26 May 2026 - 10:00 AM",
-    venue: "District 2",
-    description:
-      "A fellowship meeting for women to grow in faith and service.",
-    audience: "Women and invited guests",
-    contact: "Women's Fellowship",
-  },
-  {
-    month: "JUN",
-    day: "02",
-    title: "Communion Sunday",
-    date: "2026-06-02",
-    displayDate: "02 June 2026 - All Services",
-    venue: "CCAP Zomba",
-    description:
-      "A communion service across the Sunday worship gatherings.",
-    audience: "All members and visitors",
-    contact: "Church Office",
-  },
-  {
-    month: "JUN",
-    day: "16",
-    title: "Men's Fellowship Meeting",
-    date: "2026-06-16",
-    displayDate: "16 June 2026 - 2:00 PM",
-    venue: "District 3",
-    description: "A meeting for men focused on discipleship and purpose.",
-    audience: "Men's Fellowship members and guests",
-    contact: "Men's Fellowship",
-  },
-  {
-    month: "JUN",
-    day: "30",
-    title: "Church Anniversary",
-    date: "2026-06-30",
-    displayDate: "30 June 2026 - All Day",
-    venue: "CCAP Zomba",
-    description:
-      "A church-wide celebration of God's faithfulness to CCAP Zomba.",
-    audience: "All congregants, families and invited guests",
-    contact: "Church Office",
-  },
-];
-
-const pastEvents = [
-  {
-    month: "APR",
-    day: "21",
-    title: "Easter Celebration Service",
-    date: "2026-04-21",
-    displayDate: "21 April 2026 - All Services",
-    venue: "CCAP Zomba",
-    description:
-      "A worship celebration remembering the resurrection of Jesus Christ.",
-    audience: "All members and visitors",
-    contact: "Church Office",
-  },
-  {
-    month: "APR",
-    day: "14",
-    title: "Sunday School Teachers Workshop",
-    date: "2026-04-14",
-    displayDate: "14 April 2026 - 9:00 AM",
-    venue: "CCAP Zomba Classrooms",
-    description:
-      "A training workshop for Sunday School teachers and helpers.",
-    audience: "Sunday School teachers and volunteers",
-    contact: "Sunday School Ministry",
-  },
-  {
-    month: "MAR",
-    day: "30",
-    title: "District Fellowship Sunday",
-    date: "2026-03-30",
-    displayDate: "30 March 2026 - 2:00 PM",
-    venue: "District Host Homes",
-    description:
-      "A district-level fellowship gathering for prayer and encouragement.",
-    audience: "District members and families",
-    contact: "District Leadership",
-  },
-];
-
-const events = [...upcomingEvents, ...pastEvents];
-
 const faqs = [
   {
     question: "Where can I find CCAP Zomba upcoming events?",
@@ -147,86 +47,91 @@ const faqs = [
   },
 ];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "CollectionPage",
-      "@id": `${pageUrl}#webpage`,
-      url: pageUrl,
-      name: "Events | CCAP Zomba",
-      description: metadata.description,
-      isPartOf: {
-        "@type": "WebSite",
-        name: siteConfig.name,
-        url: siteConfig.url,
+function getStructuredData(events: EventItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: "Events | CCAP Zomba",
+        description: metadata.description,
+        isPartOf: {
+          "@type": "WebSite",
+          name: siteConfig.name,
+          url: siteConfig.url,
+        },
       },
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: siteConfig.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Events",
+            item: pageUrl,
+          },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: "CCAP Zomba Events",
+        itemListElement: events.map((event, index) => ({
           "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: siteConfig.url,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Events",
-          item: pageUrl,
-        },
-      ],
-    },
-    {
-      "@type": "ItemList",
-      name: "CCAP Zomba Events",
-      itemListElement: events.map((event, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        item: {
-          "@type": "Event",
-          name: event.title,
-          startDate: event.date,
-          description: event.description,
-          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-          eventStatus:
-            event.date < "2026-05-03"
-              ? "https://schema.org/EventCompleted"
-              : "https://schema.org/EventScheduled",
-          location: {
-            "@type": "Place",
-            name: event.venue,
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: "Zomba",
-              addressCountry: "MW",
+          position: index + 1,
+          item: {
+            "@type": "Event",
+            name: event.title,
+            startDate: event.date,
+            description: event.description,
+            eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+            eventStatus:
+              new Date(event.date) < new Date()
+                ? "https://schema.org/EventCompleted"
+                : "https://schema.org/EventScheduled",
+            location: {
+              "@type": "Place",
+              name: event.venue,
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Zomba",
+                addressCountry: "MW",
+              },
+            },
+            organizer: {
+              "@type": "Church",
+              name: siteConfig.name,
+              url: siteConfig.url,
             },
           },
-          organizer: {
-            "@type": "Church",
-            name: siteConfig.name,
-            url: siteConfig.url,
+        })),
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
           },
-        },
-      })),
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
-    },
-  ],
-};
+        })),
+      },
+    ],
+  };
+}
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const { upcomingEvents, pastEvents } = await getEvents();
+  const structuredData = getStructuredData([...upcomingEvents, ...pastEvents]);
+
   return (
     <div className="bg-white text-primary">
       <script
@@ -260,10 +165,7 @@ export default function EventsPage() {
         </div>
       </section>
 
-      <EventsBrowser
-        upcomingEvents={upcomingEvents}
-        pastEvents={pastEvents}
-      />
+      <EventsBrowser upcomingEvents={upcomingEvents} pastEvents={pastEvents} />
 
       <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="grid gap-5 border-t border-slate-200 pt-8 md:grid-cols-2">
