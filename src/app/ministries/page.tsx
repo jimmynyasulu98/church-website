@@ -3,9 +3,15 @@ import Link from "next/link";
 import { ChevronRight, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { getChurchOrThrow } from "@/lib/church";
+import { prisma } from "@/lib/db";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
 const pageUrl = absoluteUrl("/ministries");
+const fallbackMinistryImage =
+  "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=700&q=80";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Ministries | CCAP Zomba",
@@ -32,57 +38,6 @@ export const metadata: Metadata = {
   },
 };
 
-const ministries = [
-  {
-    name: "Praise Team",
-    description: "Leading the church in worship.",
-    image:
-      "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "Nvana Choir",
-    description: "Uplifting the church through song.",
-    image:
-      "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "Chigwirizano Choir",
-    description: "Bringing voices together in unity.",
-    image:
-      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "Sunday School",
-    description: "Teaching the next generation.",
-    image:
-      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "Women's Fellowship",
-    description: "Empowering women to grow in Christ.",
-    image:
-      "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "Men's Fellowship",
-    description: "Building godly men of purpose.",
-    image:
-      "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "Youth Ministry",
-    description: "Raising a generation that fears God.",
-    image:
-      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=80",
-  },
-  {
-    name: "Ushering Ministry",
-    description: "Serving with excellence and a joyful heart.",
-    image:
-      "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=700&q=80",
-  },
-];
-
 const faqs = [
   {
     question: "What ministries are available at CCAP Zomba?",
@@ -96,74 +51,100 @@ const faqs = [
   },
 ];
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "CollectionPage",
-      "@id": `${pageUrl}#webpage`,
-      url: pageUrl,
-      name: "Ministries | CCAP Zomba",
-      description: metadata.description,
-      isPartOf: {
-        "@type": "WebSite",
-        name: siteConfig.name,
-        url: siteConfig.url,
-      },
-      about: {
-        "@type": "Church",
-        name: siteConfig.name,
-        url: siteConfig.url,
-        email: siteConfig.email,
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Zomba",
-          addressCountry: "MW",
-        },
-      },
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: siteConfig.url,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "Ministries",
-          item: pageUrl,
-        },
-      ],
-    },
-    {
-      "@type": "ItemList",
-      name: "CCAP Zomba Ministries",
-      itemListElement: ministries.map((ministry, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: ministry.name,
-        description: ministry.description,
-      })),
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
-    },
-  ],
-};
+async function getMinistries() {
+  const church = await getChurchOrThrow();
 
-export default function MinistriesPage() {
+  return prisma.ministry.findMany({
+    where: {
+      churchId: church.id,
+      status: "PUBLISHED",
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      imageUrl: true,
+    },
+  });
+}
+
+function getStructuredData(ministries: Awaited<ReturnType<typeof getMinistries>>) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: "Ministries | CCAP Zomba",
+        description: metadata.description,
+        isPartOf: {
+          "@type": "WebSite",
+          name: siteConfig.name,
+          url: siteConfig.url,
+        },
+        about: {
+          "@type": "Church",
+          name: siteConfig.name,
+          url: siteConfig.url,
+          email: siteConfig.email,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Zomba",
+            addressCountry: "MW",
+          },
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: siteConfig.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Ministries",
+            item: pageUrl,
+          },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: "CCAP Zomba Ministries",
+        numberOfItems: ministries.length,
+        itemListElement: ministries.map((ministry, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: ministry.name,
+          description: ministry.description,
+        })),
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      },
+    ],
+  };
+}
+
+export default async function MinistriesPage() {
+  const ministries = await getMinistries();
+  const structuredData = getStructuredData(ministries);
+
   return (
     <div className="bg-white text-primary">
       <script
@@ -215,12 +196,14 @@ export default function MinistriesPage() {
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {ministries.map((ministry) => (
             <article
-              key={ministry.name}
+              key={ministry.id}
               className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200"
             >
               <div
                 className="h-40 bg-cover bg-center"
-                style={{ backgroundImage: `url(${ministry.image})` }}
+                style={{
+                  backgroundImage: `url(${ministry.imageUrl ?? fallbackMinistryImage})`,
+                }}
                 aria-label={`${ministry.name} at CCAP Zomba`}
               />
               <div className="p-5">
