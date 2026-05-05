@@ -416,6 +416,8 @@ export const openApiSpec = {
           startsAt: { type: "string", format: "date-time" },
           endsAt: { type: "string", format: "date-time" },
           venue: { type: "string" },
+          audience: { type: "string" },
+          contact: { type: "string" },
           imageUrl: { type: "string", format: "uri" },
         },
       },

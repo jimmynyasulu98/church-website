@@ -20,6 +20,8 @@ const eventSchema = z.object({
   startsAt: z.string().datetime(),
   endsAt: z.string().datetime().optional(),
   venue: z.string().min(2),
+  audience: z.string().optional(),
+  contact: z.string().optional(),
   imageUrl: z.string().url().optional(),
 });
 
