@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { AdminDashboard } from "@/components/dashboard/admin-dashboard";
+import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard | CCAP Zomba",
@@ -12,6 +14,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DashboardPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login?next=/dashboard");
+  }
+
   return <AdminDashboard />;
 }

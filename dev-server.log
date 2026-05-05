@@ -1,0 +1,36 @@
+
+> church-website@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.23
+  - Local:        http://localhost:3002
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 4.8s
+ ○ Compiling /api/auth/login ...
+ ✓ Compiled /api/auth/login in 833ms (149 modules)
+prisma:query SELECT "public"."User"."id", "public"."User"."churchId", "public"."User"."email", "public"."User"."passwordHash", "public"."User"."role"::text, "public"."User"."status"::text, "public"."User"."firstName", "public"."User"."lastName", "public"."User"."phone", "public"."User"."createdAt", "public"."User"."updatedAt" FROM "public"."User" WHERE ("public"."User"."email" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."MemberProfile"."id", "public"."MemberProfile"."userId", "public"."MemberProfile"."churchId", "public"."MemberProfile"."districtId", "public"."MemberProfile"."memberNumber", "public"."MemberProfile"."gender", "public"."MemberProfile"."maritalStatus", "public"."MemberProfile"."previousChurch", "public"."MemberProfile"."currentLocation", "public"."MemberProfile"."baptizedAt", "public"."MemberProfile"."currentWork", "public"."MemberProfile"."transferType"::text, "public"."MemberProfile"."transferLetterUrl", "public"."MemberProfile"."joinedAt", "public"."MemberProfile"."bio", "public"."MemberProfile"."createdAt", "public"."MemberProfile"."updatedAt" FROM "public"."MemberProfile" WHERE "public"."MemberProfile"."userId" IN ($1) OFFSET $2
+prisma:query INSERT INTO "public"."Session" ("id","userId","tokenHash","userAgent","ipAddress","expiresAt","lastSeenAt","createdAt","updatedAt") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING "public"."Session"."id", "public"."Session"."userId", "public"."Session"."tokenHash", "public"."Session"."userAgent", "public"."Session"."ipAddress", "public"."Session"."expiresAt", "public"."Session"."revokedAt", "public"."Session"."lastSeenAt", "public"."Session"."createdAt", "public"."Session"."updatedAt"
+ POST /api/auth/login 200 in 1695ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 6.1s (1734 modules)
+prisma:query SELECT "public"."Session"."id", "public"."Session"."userId", "public"."Session"."tokenHash", "public"."Session"."userAgent", "public"."Session"."ipAddress", "public"."Session"."expiresAt", "public"."Session"."revokedAt", "public"."Session"."lastSeenAt", "public"."Session"."createdAt", "public"."Session"."updatedAt" FROM "public"."Session" WHERE ("public"."Session"."tokenHash" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."User"."id", "public"."User"."churchId", "public"."User"."email", "public"."User"."passwordHash", "public"."User"."role"::text, "public"."User"."status"::text, "public"."User"."firstName", "public"."User"."lastName", "public"."User"."phone", "public"."User"."createdAt", "public"."User"."updatedAt" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+prisma:query SELECT "public"."MemberProfile"."id", "public"."MemberProfile"."userId", "public"."MemberProfile"."churchId", "public"."MemberProfile"."districtId", "public"."MemberProfile"."memberNumber", "public"."MemberProfile"."gender", "public"."MemberProfile"."maritalStatus", "public"."MemberProfile"."previousChurch", "public"."MemberProfile"."currentLocation", "public"."MemberProfile"."baptizedAt", "public"."MemberProfile"."currentWork", "public"."MemberProfile"."transferType"::text, "public"."MemberProfile"."transferLetterUrl", "public"."MemberProfile"."joinedAt", "public"."MemberProfile"."bio", "public"."MemberProfile"."createdAt", "public"."MemberProfile"."updatedAt" FROM "public"."MemberProfile" WHERE "public"."MemberProfile"."userId" IN ($1) OFFSET $2
+prisma:query SELECT "public"."UserPermission"."userId", "public"."UserPermission"."permissionId" FROM "public"."UserPermission" WHERE "public"."UserPermission"."userId" IN ($1) OFFSET $2
+prisma:query UPDATE "public"."Session" SET "lastSeenAt" = $1, "updatedAt" = $2 WHERE ("public"."Session"."id" = $3 AND 1=1) RETURNING "public"."Session"."id", "public"."Session"."userId", "public"."Session"."tokenHash", "public"."Session"."userAgent", "public"."Session"."ipAddress", "public"."Session"."expiresAt", "public"."Session"."revokedAt", "public"."Session"."lastSeenAt", "public"."Session"."createdAt", "public"."Session"."updatedAt"
+ GET /dashboard 200 in 6490ms
+ ✓ Compiled in 464ms (770 modules)
+ ✓ Compiled /api/auth/logout in 459ms (948 modules)
+prisma:query BEGIN
+prisma:query UPDATE "public"."Session" SET "revokedAt" = $1, "updatedAt" = $2 WHERE ("public"."Session"."tokenHash" = $3 AND "public"."Session"."revokedAt" IS NULL)
+prisma:query COMMIT
+ POST /api/auth/logout 200 in 515ms
+ GET /dashboard 307 in 96ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 675ms (1726 modules)
+ GET /login 200 in 943ms
+ ✓ Compiled in 1974ms (778 modules)
+ ✓ Compiled in 281ms (778 modules)

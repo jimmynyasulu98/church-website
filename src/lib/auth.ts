@@ -103,17 +103,19 @@ export function clearSessionCookie() {
 export async function revokeCurrentSession() {
   const token = cookies().get(cookieName)?.value;
 
-  if (token) {
-    await prisma.session.updateMany({
-      where: {
-        tokenHash: hashSessionToken(token),
-        revokedAt: null,
-      },
-      data: { revokedAt: new Date() },
-    });
+  try {
+    if (token) {
+      await prisma.session.updateMany({
+        where: {
+          tokenHash: hashSessionToken(token),
+          revokedAt: null,
+        },
+        data: { revokedAt: new Date() },
+      });
+    }
+  } finally {
+    clearSessionCookie();
   }
-
-  clearSessionCookie();
 }
 
 export function canManageContent(role: string) {

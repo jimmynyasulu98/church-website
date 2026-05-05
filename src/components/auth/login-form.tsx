@@ -21,6 +21,14 @@ type LoginResponse = {
   };
 };
 
+function getSafeRedirectPath(path: string | null) {
+  if (!path || !path.startsWith("/") || path.startsWith("//")) {
+    return "/dashboard";
+  }
+
+  return path;
+}
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,10 +61,10 @@ export function LoginForm() {
       }
 
       setMessage(`Welcome, ${result.data?.firstName ?? "friend"}.`);
-      const redirectTo = searchParams.get("next") || "/";
+      const redirectTo = getSafeRedirectPath(searchParams.get("next"));
 
       router.refresh();
-      router.push(redirectTo.startsWith("/") ? redirectTo : "/");
+      router.push(redirectTo);
     } catch {
       setError("We could not reach the login service. Please try again.");
     } finally {

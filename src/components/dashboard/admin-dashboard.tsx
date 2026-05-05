@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,7 +14,6 @@ import {
   FileText,
   Home,
   LayoutDashboard,
-  LogOut,
   Mail,
   MapPinned,
   Menu,
@@ -21,9 +23,11 @@ import {
   ShieldCheck,
   UserRound,
   UsersRound,
+  X,
 } from "lucide-react";
 
 import logo from "@/public/ccap_logo.png";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, active: true },
@@ -150,15 +154,41 @@ const toneClasses: Record<string, string> = {
 };
 
 export function AdminDashboard() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-primary text-white shadow-xl lg:flex">
-        <div className="flex h-20 items-center gap-3 border-b border-white/10 px-5">
-          <Image src={logo} alt="CCAP Zomba logo" className="h-11 w-11 object-contain" />
-          <div>
-            <p className="text-sm font-black leading-tight">CCAP Zomba</p>
-            <p className="text-[11px] font-semibold text-blue-100">Admin Portal</p>
+      {isSidebarOpen ? (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-slate-950/50 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-label="Close dashboard menu"
+        />
+      ) : null}
+
+      <aside
+        id="dashboard-sidebar"
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-primary text-white shadow-xl transition-transform duration-200 lg:z-40 lg:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex h-20 items-center justify-between gap-3 border-b border-white/10 px-5">
+          <div className="flex items-center gap-3">
+            <Image src={logo} alt="CCAP Zomba logo" className="h-11 w-11 object-contain" />
+            <div>
+              <p className="text-sm font-black leading-tight">CCAP Zomba</p>
+              <p className="text-[11px] font-semibold text-blue-100">Admin Portal</p>
+            </div>
           </div>
+          <button
+            type="button"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-blue-50 transition hover:bg-white/10 hover:text-white lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+            aria-label="Close dashboard menu"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5" aria-label="Dashboard">
@@ -169,6 +199,7 @@ export function AdminDashboard() {
               <Link
                 href="/dashboard"
                 key={item.label}
+                onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold transition ${
                   item.active
                     ? "bg-accent text-white shadow-lg shadow-blue-950/20"
@@ -183,13 +214,7 @@ export function AdminDashboard() {
         </nav>
 
         <div className="border-t border-white/10 p-3">
-          <Link
-            href="/"
-            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold text-blue-50 transition hover:bg-white/10 hover:text-white"
-          >
-            <LogOut className="h-4 w-4" aria-hidden="true" />
-            Logout
-          </Link>
+          <LogoutButton className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-bold text-blue-50 transition hover:bg-white/10 hover:text-white disabled:cursor-wait disabled:opacity-75" />
         </div>
       </aside>
 
@@ -199,8 +224,11 @@ export function AdminDashboard() {
             <div className="flex items-center gap-3">
               <button
                 type="button"
+                onClick={() => setIsSidebarOpen(true)}
                 className="flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 text-primary lg:hidden"
                 aria-label="Open dashboard menu"
+                aria-expanded={isSidebarOpen}
+                aria-controls="dashboard-sidebar"
               >
                 <Menu className="h-5 w-5" aria-hidden="true" />
               </button>
